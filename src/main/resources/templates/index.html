@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecera('Salario neto')}"></head>
+<body>
+
+<nav th:replace="~{fragmentos/layout :: menu('salario')}"></nav>
+
+<section class="section pt-6">
+<div class="container" style="max-width: 800px;">
+
+    <div class="mb-5">
+        <h1 class="title is-4 mb-1" style="letter-spacing:-.02em;">Cálculo de salario neto</h1>
+        <p class="subtitle is-6 has-text-grey">
+            Descuentos de ley aplicables a trabajadores del sector privado en El Salvador
+        </p>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-content">
+            <form method="post" action="/calcular">
+                <div class="columns">
+                    <div class="column is-7">
+                        <div class="field">
+                            <label class="label" for="salario">Salario bruto</label>
+                            <div class="control">
+                                <input class="input is-medium" type="number" id="salario" name="salario"
+                                       step="0.01" min="0" required
+                                       th:value="${salarioIngresado}" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-5">
+                        <div class="field">
+                            <label class="label" for="periodicidad">Periodicidad</label>
+                            <div class="control">
+                                <div class="select is-medium is-fullwidth">
+                                    <select id="periodicidad" name="periodicidad">
+                                        <option th:each="p : ${periodicidades}"
+                                                th:value="${p}" th:text="${p}"
+                                                th:selected="${p == periodicidadElegida}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="button is-primary is-medium mt-2">Calcular</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${resultado}" class="columns is-variable is-5">
+        <div class="column is-7">
+            <div class="card">
+                <header class="card-header"><p class="card-header-title">Detalle del trabajador</p></header>
+                <div class="card-content">
+                    <table class="table is-fullwidth tabla-resultado">
+                        <tr><td>Salario bruto</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioBruto,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-descuento"><td>AFP &mdash; 7.25%</td>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoAfp,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-descuento"><td>ISSS &mdash; 3%</td>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoIsss,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-sub"><td>Renta imponible</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.rentaImponible,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-descuento"><td>Impuesto sobre la Renta</td>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoIsr,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-total">
+                            <td>Salario líquido</td>
+                            <td><span class="cifra" style="color:var(--acento);"
+                                th:text="'$' + ${#numbers.formatDecimal(resultado.salarioLiquido,1,'COMMA',2,'POINT')}"></span></td></tr>
+                    </table>
+
+                    <table class="table is-fullwidth tabla-resultado mt-4">
+                        <tr class="encabezado-seccion"><td colspan="2">Costo para el patrono</td></tr>
+                        <tr><td>AFP patronal &mdash; 8.75%</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.afpPatronal,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr><td>ISSS patronal &mdash; 7.5%</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.isssPatronal,1,'COMMA',2,'POINT')}"></td></tr>
+                        <tr class="fila-total"><td>Costo total</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.costoTotalPatrono,1,'COMMA',2,'POINT')}"></td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-5">
+            <div class="card" style="height:100%;">
+                <header class="card-header"><p class="card-header-title">Distribución</p></header>
+                <div class="card-content is-flex is-align-items-center" style="height:calc(100% - 56px);">
+                    <canvas id="grafico"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nota-legal mt-5">
+        El impuesto sobre la renta no se aplica al salario bruto sino a la <strong>renta imponible</strong>,
+        resultado de restar las cotizaciones de ISSS y AFP. La cotización del ISSS a cargo del trabajador
+        tiene un techo de $30.00 mensuales sobre una base máxima de $1,000.00.
+    </div>
+
+</div>
+</section>
+
+<footer th:replace="~{fragmentos/layout :: pie}"></footer>
+<div th:replace="~{fragmentos/layout :: scripts}"></div>
+
+<script th:if="${resultado}" th:inline="javascript">
+    new Chart(document.getElementById('grafico'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Líquido', 'AFP', 'ISSS', 'Renta'],
+            datasets: [{
+                data: [
+                    [[${resultado.salarioLiquido}]],
+                    [[${resultado.montoAfp}]],
+                    [[${resultado.montoIsss}]],
+                    [[${resultado.montoIsr}]]
+                ],
+                backgroundColor: ['#3d7359', '#8fa89b', '#c4cdc7', '#a4553f'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { position: 'bottom',
+                          labels: { padding: 16, boxWidth: 10, boxHeight: 10,
+                                    font: { size: 11, family: 'Inter' } } }
+            },
+            cutout: '68%'
+        }
+    });
+</script>
+
+</body>
+</html>

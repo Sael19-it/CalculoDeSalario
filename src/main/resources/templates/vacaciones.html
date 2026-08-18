@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecera('Vacaciones')}"></head>
+<body>
+<nav th:replace="~{fragmentos/layout :: menu('vacaciones')}"></nav>
+
+<section class="section pt-6">
+<div class="container" style="max-width: 700px;">
+
+    <div class="mb-5">
+        <h1 class="title is-4 mb-1">Prestación por vacaciones</h1>
+        <p class="subtitle is-6 has-text-grey">Art. 177 del Código de Trabajo</p>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-content">
+            <form method="post" action="/vacaciones">
+                <div class="field">
+                    <label class="label" for="salario">Salario mensual</label>
+                    <div class="control">
+                        <input class="input is-medium" type="number" id="salario" name="salario"
+                               step="0.01" min="0" required th:value="${salarioIngresado}" placeholder="0.00">
+                    </div>
+                </div>
+                <button type="submit" class="button is-primary is-medium mt-2">Calcular</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${resultado}" class="card mb-5">
+        <header class="card-header"><p class="card-header-title">Resultado</p></header>
+        <div class="card-content">
+            <table class="table is-fullwidth tabla-resultado">
+                <tr class="fila-sub"><td>Salario diario</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioDiario,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr><td>Días de vacación</td>
+                    <td th:text="${resultado.diasVacacion}"></td></tr>
+                <tr><td>Salario de los 15 días</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioBase,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr><td>Recargo del 30%</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.recargo,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr class="fila-total"><td>Total a recibir</td>
+                    <td><span class="cifra"
+                        th:text="'$' + ${#numbers.formatDecimal(resultado.total,1,'COMMA',2,'POINT')}"></span></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="nota-legal">
+        El trabajador recibe una prestación equivalente a <strong>15 días de salario</strong>
+        más un recargo del <strong>30%</strong> sobre ese monto. Se requiere un año continuo
+        de servicio con el mismo patrono.
+    </div>
+
+</div>
+</section>
+
+<footer th:replace="~{fragmentos/layout :: pie}"></footer>
+<div th:replace="~{fragmentos/layout :: scripts}"></div>
+</body>
+</html>

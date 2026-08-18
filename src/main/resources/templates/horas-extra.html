@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecera('Horas extra')}"></head>
+<body>
+<nav th:replace="~{fragmentos/layout :: menu('horas')}"></nav>
+
+<section class="section pt-6">
+<div class="container" style="max-width: 700px;">
+
+    <div class="mb-5">
+        <h1 class="title is-4 mb-1">Horas extra y recargos</h1>
+        <p class="subtitle is-6 has-text-grey">Arts. 168, 169, 175 y 192 del Código de Trabajo</p>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-content">
+            <form method="post" action="/horas-extra">
+                <div class="columns">
+                    <div class="column is-7">
+                        <div class="field">
+                            <label class="label" for="salario">Salario mensual</label>
+                            <div class="control">
+                                <input class="input is-medium" type="number" id="salario" name="salario"
+                                       step="0.01" min="0" required th:value="${salarioIngresado}" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-5">
+                        <div class="field">
+                            <label class="label" for="horas">Horas</label>
+                            <div class="control">
+                                <input class="input is-medium" type="number" id="horas" name="horas"
+                                       step="0.5" min="0" required th:value="${horasIngresadas}" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label" for="tipo">Tipo de jornada</label>
+                    <div class="control">
+                        <div class="select is-medium is-fullwidth">
+                            <select id="tipo" name="tipo">
+                                <option value="EXTRA_DIURNA"   th:selected="${tipoElegido == 'EXTRA_DIURNA'}">Hora extra diurna</option>
+                                <option value="EXTRA_NOCTURNA" th:selected="${tipoElegido == 'EXTRA_NOCTURNA'}">Hora extra nocturna</option>
+                                <option value="NOCTURNA_ORD"   th:selected="${tipoElegido == 'NOCTURNA_ORD'}">Hora ordinaria nocturna</option>
+                                <option value="ASUETO"         th:selected="${tipoElegido == 'ASUETO'}">Trabajo en día de asueto</option>
+                                <option value="SEPTIMO_DIA"    th:selected="${tipoElegido == 'SEPTIMO_DIA'}">Día de descanso semanal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="button is-primary is-medium mt-2">Calcular</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${resultado}" class="card mb-5">
+        <header class="card-header"><p class="card-header-title">Resultado</p></header>
+        <div class="card-content">
+            <table class="table is-fullwidth tabla-resultado">
+                <tr class="fila-sub"><td>Hora ordinaria (salario diario ÷ 8)</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioHoraOrdinaria,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr><td>Concepto</td><td th:text="${resultado.descripcion}"></td></tr>
+                <tr><td>Factor aplicado</td>
+                    <td th:text="${#numbers.formatDecimal(resultado.factor,1,2)} + '×'"></td></tr>
+                <tr><td>Valor por hora</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.valorPorHora,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr><td>Cantidad de horas</td>
+                    <td th:text="${#numbers.formatDecimal(resultado.horas,1,1)}"></td></tr>
+                <tr class="fila-total"><td>Total a pagar</td>
+                    <td><span class="cifra"
+                        th:text="'$' + ${#numbers.formatDecimal(resultado.total,1,'COMMA',2,'POINT')}"></span></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="nota-legal">
+        La hora ordinaria resulta de dividir el salario diario entre 8. La hora extra
+        diurna se paga al <strong>doble</strong>; la nocturna suma además el
+        <strong>25%</strong> de recargo por nocturnidad.
+    </div>
+
+</div>
+</section>
+
+<footer th:replace="~{fragmentos/layout :: pie}"></footer>
+<div th:replace="~{fragmentos/layout :: scripts}"></div>
+</body>
+</html>

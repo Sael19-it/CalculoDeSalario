@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecera('Quincena 25')}"></head>
+<body>
+<nav th:replace="~{fragmentos/layout :: menu('q25')}"></nav>
+
+<section class="section pt-6">
+<div class="container" style="max-width: 700px;">
+
+    <div class="mb-5">
+        <h1 class="title is-4 mb-1">Quincena 25</h1>
+        <p class="subtitle is-6 has-text-grey">Pago adicional equivalente al 50% del salario mensual</p>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-content">
+            <form method="post" action="/quincena-25">
+                <div class="columns">
+                    <div class="column is-7">
+                        <div class="field">
+                            <label class="label" for="salario">Salario mensual</label>
+                            <div class="control">
+                                <input class="input is-medium" type="number" id="salario" name="salario"
+                                       step="0.01" min="0" required th:value="${salarioIngresado}" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-5">
+                        <div class="field">
+                            <label class="label" for="anios">Años con el patrono</label>
+                            <div class="control">
+                                <input class="input is-medium" type="number" id="anios" name="anios"
+                                       min="0" required th:value="${aniosIngresados}" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="button is-primary is-medium mt-2">Verificar</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${resultado}" class="card mb-5">
+        <header class="card-header"><p class="card-header-title">Resultado</p></header>
+        <div class="card-content">
+            <div class="mb-4">
+                <span class="etiqueta-estado"
+                      th:classappend="${resultado.aplica} ? 'etiqueta-si' : 'etiqueta-no'"
+                      th:text="${resultado.aplica} ? 'Aplica' : 'No aplica'"></span>
+            </div>
+            <table class="table is-fullwidth tabla-resultado">
+                <tr><td>Salario mensual</td>
+                    <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioMensual,1,'COMMA',2,'POINT')}"></td></tr>
+                <tr class="fila-total"><td>Monto a recibir</td>
+                    <td><span class="cifra"
+                        th:style="${resultado.aplica} ? '' : 'color:#949e99;'"
+                        th:text="'$' + ${#numbers.formatDecimal(resultado.monto,1,'COMMA',2,'POINT')}"></span></td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${resultado}" class="nota-legal mb-4"
+         th:classappend="${resultado.aplica} ? '' : 'es-negativa'"
+         th:text="${resultado.motivo}"></div>
+
+    <div class="nota-legal">
+        Aplica a quienes devengan hasta <strong>$1,500.00</strong> mensuales y acumulan al menos
+        <strong>un año</strong> con el mismo patrono. No está sujeta a descuentos de ISSS, AFP ni renta.
+    </div>
+
+</div>
+</section>
+
+<footer th:replace="~{fragmentos/layout :: pie}"></footer>
+<div th:replace="~{fragmentos/layout :: scripts}"></div>
+</body>
+</html>

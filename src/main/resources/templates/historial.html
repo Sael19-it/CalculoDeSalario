@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: cabecera('Historial')}"></head>
+<body>
+<nav th:replace="~{fragmentos/layout :: menu('historial')}"></nav>
+
+<section class="section pt-6">
+<div class="container" style="max-width: 760px;">
+
+    <div class="mb-5">
+        <h1 class="title is-4 mb-1">Historial de cálculos</h1>
+        <p class="subtitle is-6 has-text-grey">Últimos 20 registros almacenados en la base de datos</p>
+    </div>
+
+    <div class="nota-legal" th:if="${#lists.isEmpty(registros)}">
+        Todavía no hay cálculos registrados. Realizá uno en la sección
+        <strong>Salario</strong> y volvé a esta página.
+    </div>
+
+    <div class="card" th:unless="${#lists.isEmpty(registros)}">
+        <div class="card-content">
+            <table class="table is-fullwidth tabla-resultado">
+                <thead>
+                    <tr class="encabezado-seccion">
+                        <td>Fecha</td>
+                        <td style="text-align:right;">Bruto</td>
+                        <td style="text-align:right;">Descuentos</td>
+                        <td style="text-align:right;">Líquido</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${registros}">
+                        <td th:text="${#temporals.format(r.calculadoEn, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td style="text-align:right;"
+                            th:text="'$' + ${#numbers.formatDecimal(r.salarioBruto,1,'COMMA',2,'POINT')}"></td>
+                        <td style="text-align:right; color:#9c5340; font-weight:400;"
+                            th:text="'$' + ${#numbers.formatDecimal(
+                                r.montoAfp.add(r.montoIsss).add(r.montoIsr),1,'COMMA',2,'POINT')}"></td>
+                        <td style="text-align:right;"
+                            th:text="'$' + ${#numbers.formatDecimal(r.salarioLiquido,1,'COMMA',2,'POINT')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <form method="post" action="/historial/limpiar" class="mt-4"
+          th:unless="${#lists.isEmpty(registros)}">
+        <button type="submit" class="button is-small is-light">Limpiar historial</button>
+    </form>
+
+</div>
+</section>
+
+<footer th:replace="~{fragmentos/layout :: pie}"></footer>
+<div th:replace="~{fragmentos/layout :: scripts}"></div>
+</body>
+</html>

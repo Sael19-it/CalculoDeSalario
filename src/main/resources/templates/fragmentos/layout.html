@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<head th:fragment="cabecera(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | Calculadora de Salario'"></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+
+<nav th:fragment="menu(activo)" class="navbar is-dark" role="navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item has-text-weight-semibold" href="/">Calculadora de Salario</a>
+            <a role="button" class="navbar-burger" id="botonMenu" data-target="menuPrincipal">
+                <span></span><span></span><span></span>
+            </a>
+        </div>
+        <div id="menuPrincipal" class="navbar-menu">
+            <div class="navbar-end">
+                <a class="navbar-item" href="/"            th:classappend="${activo == 'salario'}    ? 'is-active'">Salario</a>
+                <a class="navbar-item" href="/aguinaldo"   th:classappend="${activo == 'aguinaldo'}  ? 'is-active'">Aguinaldo</a>
+                <a class="navbar-item" href="/vacaciones"  th:classappend="${activo == 'vacaciones'} ? 'is-active'">Vacaciones</a>
+                <a class="navbar-item" href="/horas-extra" th:classappend="${activo == 'horas'}      ? 'is-active'">Horas extra</a>
+                <a class="navbar-item" href="/quincena-25" th:classappend="${activo == 'q25'}        ? 'is-active'">Quincena 25</a>
+                <a class="navbar-item" href="/historial"   th:classappend="${activo == 'historial'}  ? 'is-active'">Historial</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<footer th:fragment="pie" class="footer">
+    <div class="content has-text-centered is-size-7" style="color:#949e99;">
+        <p>
+            Cálculos conforme al Código de Trabajo y la Ley de Impuesto sobre la Renta de El Salvador.<br>
+            Tabla de retención vigente desde mayo 2025 &middot; Decreto Ejecutivo No. 10.
+        </p>
+    </div>
+</footer>
+
+<div th:fragment="scripts">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        const boton = document.getElementById('botonMenu');
+        if (boton) {
+            boton.addEventListener('click', () => {
+                const menu = document.getElementById(boton.dataset.target);
+                boton.classList.toggle('is-active');
+                menu.classList.toggle('is-active');
+            });
+        }
+    </script>
+</div>
+
+</body>
+</html>
