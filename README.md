@@ -126,6 +126,3 @@ complejidad de gestionar el ciclo de vida de entidades que no cambian.
 
 ---
 
-## Documentación
-
-La carpeta `docs/` contiene la guía de estudio y la documentación técnica ampliada.
