@@ -58,13 +58,13 @@
                         <tr><td>Salario bruto</td>
                             <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioBruto,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-descuento"><td>AFP &mdash; 7.25%</td>
-                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoAfp,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.descuentoAfp,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-descuento"><td>ISSS &mdash; 3%</td>
-                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoIsss,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.descuentoIsss,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-sub"><td>Renta imponible</td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.rentaImponible,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.salarioAfectoARenta,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-descuento"><td>Impuesto sobre la Renta</td>
-                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.montoIsr,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'&minus; ' + ${#numbers.formatDecimal(resultado.descuentoDeRenta,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-total">
                             <td>Salario líquido</td>
                             <td><span class="cifra" style="color:var(--acento);"
@@ -74,11 +74,11 @@
                     <table class="table is-fullwidth tabla-resultado mt-4">
                         <tr class="encabezado-seccion"><td colspan="2">Costo para el patrono</td></tr>
                         <tr><td>AFP patronal &mdash; 8.75%</td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.afpPatronal,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.aporteAfpDelPatrono,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr><td>ISSS patronal &mdash; 7.5%</td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.isssPatronal,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.aporteIsssDelPatrono,1,'COMMA',2,'POINT')}"></td></tr>
                         <tr class="fila-total"><td>Costo total</td>
-                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.costoTotalPatrono,1,'COMMA',2,'POINT')}"></td></tr>
+                            <td th:text="'$' + ${#numbers.formatDecimal(resultado.costoTotalParaElPatrono,1,'COMMA',2,'POINT')}"></td></tr>
                     </table>
                 </div>
             </div>
@@ -114,9 +114,9 @@
             datasets: [{
                 data: [
                     [[${resultado.salarioLiquido}]],
-                    [[${resultado.montoAfp}]],
-                    [[${resultado.montoIsss}]],
-                    [[${resultado.montoIsr}]]
+                    [[${resultado.descuentoAfp}]],
+                    [[${resultado.descuentoIsss}]],
+                    [[${resultado.descuentoDeRenta}]]
                 ],
                 backgroundColor: ['#3d7359', '#8fa89b', '#c4cdc7', '#a4553f'],
                 borderWidth: 0

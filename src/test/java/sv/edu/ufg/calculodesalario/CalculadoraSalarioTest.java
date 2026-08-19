@@ -28,10 +28,10 @@ class CalculadoraSalarioTest {
     void salarioSinRenta() {
         ResultadoSalario r = mensual("400");
 
-        assertThat(r.montoAfp()).isEqualByComparingTo("29.00");
-        assertThat(r.montoIsss()).isEqualByComparingTo("12.00");
-        assertThat(r.rentaImponible()).isEqualByComparingTo("359.00");
-        assertThat(r.montoIsr()).isEqualByComparingTo("0.00");
+        assertThat(r.descuentoAfp()).isEqualByComparingTo("29.00");
+        assertThat(r.descuentoIsss()).isEqualByComparingTo("12.00");
+        assertThat(r.salarioAfectoARenta()).isEqualByComparingTo("359.00");
+        assertThat(r.descuentoDeRenta()).isEqualByComparingTo("0.00");
         assertThat(r.salarioLiquido()).isEqualByComparingTo("359.00");
     }
 
@@ -40,8 +40,8 @@ class CalculadoraSalarioTest {
     void salarioLimiteExento() {
         ResultadoSalario r = mensual("600");
 
-        assertThat(r.rentaImponible()).isEqualByComparingTo("538.50");
-        assertThat(r.montoIsr()).isEqualByComparingTo("0.00");
+        assertThat(r.salarioAfectoARenta()).isEqualByComparingTo("538.50");
+        assertThat(r.descuentoDeRenta()).isEqualByComparingTo("0.00");
         assertThat(r.salarioLiquido()).isEqualByComparingTo("538.50");
     }
 
@@ -50,10 +50,10 @@ class CalculadoraSalarioTest {
     void salarioTramoTres() {
         ResultadoSalario r = mensual("1000");
 
-        assertThat(r.montoAfp()).isEqualByComparingTo("72.50");
-        assertThat(r.montoIsss()).isEqualByComparingTo("30.00");
-        assertThat(r.rentaImponible()).isEqualByComparingTo("897.50");
-        assertThat(r.montoIsr()).isEqualByComparingTo("60.45");
+        assertThat(r.descuentoAfp()).isEqualByComparingTo("72.50");
+        assertThat(r.descuentoIsss()).isEqualByComparingTo("30.00");
+        assertThat(r.salarioAfectoARenta()).isEqualByComparingTo("897.50");
+        assertThat(r.descuentoDeRenta()).isEqualByComparingTo("60.45");
         assertThat(r.salarioLiquido()).isEqualByComparingTo("837.05");
     }
 
@@ -62,25 +62,25 @@ class CalculadoraSalarioTest {
     void salarioTramoCuatro() {
         ResultadoSalario r = mensual("2500");
 
-        assertThat(r.montoAfp()).isEqualByComparingTo("181.25");
-        assertThat(r.montoIsss()).isEqualByComparingTo("30.00");
-        assertThat(r.montoIsr()).isEqualByComparingTo("363.77");
+        assertThat(r.descuentoAfp()).isEqualByComparingTo("181.25");
+        assertThat(r.descuentoIsss()).isEqualByComparingTo("30.00");
+        assertThat(r.descuentoDeRenta()).isEqualByComparingTo("363.77");
         assertThat(r.salarioLiquido()).isEqualByComparingTo("1924.98");
     }
 
     @Test
     @DisplayName("El ISSS nunca supera treinta dolares mensuales")
     void topeIsssMensual() {
-        assertThat(mensual("1000").montoIsss()).isEqualByComparingTo("30.00");
-        assertThat(mensual("5000").montoIsss()).isEqualByComparingTo("30.00");
-        assertThat(mensual("99999").montoIsss()).isEqualByComparingTo("30.00");
+        assertThat(mensual("1000").descuentoIsss()).isEqualByComparingTo("30.00");
+        assertThat(mensual("5000").descuentoIsss()).isEqualByComparingTo("30.00");
+        assertThat(mensual("99999").descuentoIsss()).isEqualByComparingTo("30.00");
     }
 
     @Test
     @DisplayName("La AFP no tiene tope maximo de cotizacion")
     void afpSinTope() {
-        assertThat(mensual("5000").montoAfp()).isEqualByComparingTo("362.50");
-        assertThat(mensual("10000").montoAfp()).isEqualByComparingTo("725.00");
+        assertThat(mensual("5000").descuentoAfp()).isEqualByComparingTo("362.50");
+        assertThat(mensual("10000").descuentoAfp()).isEqualByComparingTo("725.00");
     }
 
     @Test
@@ -89,9 +89,9 @@ class CalculadoraSalarioTest {
         ResultadoSalario r = calculadora.calcular(
                 new BigDecimal("500"), Periodicidad.QUINCENAL);
 
-        assertThat(r.montoIsss()).isEqualByComparingTo("15.00");
-        assertThat(r.montoAfp()).isEqualByComparingTo("36.25");
-        assertThat(r.rentaImponible()).isEqualByComparingTo("448.75");
+        assertThat(r.descuentoIsss()).isEqualByComparingTo("15.00");
+        assertThat(r.descuentoAfp()).isEqualByComparingTo("36.25");
+        assertThat(r.salarioAfectoARenta()).isEqualByComparingTo("448.75");
     }
 
     @Test
@@ -99,9 +99,9 @@ class CalculadoraSalarioTest {
     void costoPatronal() {
         ResultadoSalario r = mensual("1000");
 
-        assertThat(r.afpPatronal()).isEqualByComparingTo("87.50");
-        assertThat(r.isssPatronal()).isEqualByComparingTo("75.00");
-        assertThat(r.costoTotalPatrono()).isEqualByComparingTo("1162.50");
+        assertThat(r.aporteAfpDelPatrono()).isEqualByComparingTo("87.50");
+        assertThat(r.aporteIsssDelPatrono()).isEqualByComparingTo("75.00");
+        assertThat(r.costoTotalParaElPatrono()).isEqualByComparingTo("1162.50");
     }
 
     @Test
@@ -110,7 +110,7 @@ class CalculadoraSalarioTest {
         ResultadoSalario r = mensual("1000");
 
         // Si se calculara mal, sobre el bruto de 1000, daria 81.15
-        assertThat(r.montoIsr()).isEqualByComparingTo("60.45");
-        assertThat(r.montoIsr()).isNotEqualByComparingTo("81.15");
+        assertThat(r.descuentoDeRenta()).isEqualByComparingTo("60.45");
+        assertThat(r.descuentoDeRenta()).isNotEqualByComparingTo("81.15");
     }
 }

@@ -35,7 +35,7 @@
                             th:text="'$' + ${#numbers.formatDecimal(r.salarioBruto,1,'COMMA',2,'POINT')}"></td>
                         <td style="text-align:right; color:#9c5340; font-weight:400;"
                             th:text="'$' + ${#numbers.formatDecimal(
-                                r.montoAfp.add(r.montoIsss).add(r.montoIsr),1,'COMMA',2,'POINT')}"></td>
+                                r.descuentoAfp.add(r.descuentoIsss).add(r.descuentoDeRenta),1,'COMMA',2,'POINT')}"></td>
                         <td style="text-align:right;"
                             th:text="'$' + ${#numbers.formatDecimal(r.salarioLiquido,1,'COMMA',2,'POINT')}"></td>
                     </tr>
